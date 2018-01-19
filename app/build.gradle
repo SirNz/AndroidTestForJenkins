@@ -3,6 +3,16 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "27.0.0"
+
+    signingConfigs {
+        releaseConfigs {
+            storeFile file('./test.jks')
+            storePassword 'viistep'
+            keyAlias 'test_key'
+            keyPassword '123456'
+        }
+    }
+
     defaultConfig {
         applicationId "com.example.administrator.androidtestforjenkins"
         minSdkVersion 15
@@ -17,6 +27,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
