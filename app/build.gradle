@@ -26,23 +26,23 @@ android {
             keyPassword "123456"
             storePassword "viistep"
         }
-    }
+}
 
-    buildTypes {
-        release {
-            minifyEnabled true
-            zipAlignEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.signingConfig
-        }
-        debug{ }
+buildTypes {
+    release {
+        minifyEnabled true  //启用Proguard
+        zipAlignEnabled true    //清理无用资源，依赖于minifyEnabled
+        shrinkResources true    //启用zipAlign压缩
+        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        signingConfig signingConfigs.signingConfig
     }
-    dexOptions {
-        javaMaxHeapSize "2g"
-    }
+    debug{ }
+}
+dexOptions {
+    javaMaxHeapSize "2g"
+}
 
-    //渠道Flavors
+//渠道Flavors
     productFlavors {
         wandoujia {
             manifestPlaceholders = [UMENG_CHANNEL_VALUE: "wandoujia"]
