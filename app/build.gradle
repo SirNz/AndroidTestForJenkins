@@ -4,15 +4,6 @@ android {
     compileSdkVersion 25
     buildToolsVersion "27.0.0"
 
-    signingConfigs {
-        releaseConfigs {
-            storeFile file('./test.jks')
-            storePassword 'viistep'
-            keyAlias 'test_key'
-            keyPassword '123456'
-        }
-    }
-
     defaultConfig {
         applicationId "com.example.administrator.androidtestforjenkins"
         minSdkVersion 15
@@ -21,13 +12,75 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    signingConfigs {  //签名配置
+        signingConfig {
+            //由于本地打包使用的是本机上的KeyStore
+            //而Jenkins打包用的是服务器上的KeyStore
+            //两个路径不一样
+            if ("true".equals(IS_JENKINS)){
+                storeFile file("./test.jks")
+            }else{
+                storeFile file("D:/Company/AndroidTestForJenkins/app/test,jks")
+            }
+            keyAlias "test_key"
+            keyPassword "123456"
+            storePassword "visstep"
         }
     }
 
+    buildTypes {
+        release {
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.signingConfig
+        }
+        debug{ }
+    }
+    dexOptions {
+        javaMaxHeapSize "2g"
+    }
+
+    //渠道Flavors
+    productFlavors {
+        wandoujia {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "wandoujia"]
+        }
+        xiaomi {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "xiaomi"]
+        }
+    }
+
+    /*
+    //修改生成的apk名字及输出文件夹
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            //新名字
+            def newName
+            //输出文件夹
+            def outDirectory
+            //是否为Jenkins打包，输出路径不同
+            if ("true".equals(IS_JENKINS)) {
+                //Jenkins打包输出到服务器路径
+                //BUILD_PATH为服务器输出路径
+                outDirectory = "/home/jerry/App"
+                //AutoBuildTest-v1.0.1-xiaomi-release.apk
+                newName = 'AutoBuildTest-v' + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '.apk'
+            } else {
+                //本机打包输出在本机路径
+                outDirectory = output.outputFile.getParent()
+                if ('debug'.equals(variant.buildType.name)) {
+                    newName = "AutoBuildTest-v${APP_VERSION}-debug.apk"
+                } else {
+                    //AutoBuildTest-v1.0.1-xiaomi-release.apk
+                    newName = 'AutoBuildTest-v' + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '.apk'
+                }
+            }
+            output.outputFile = new File(outDirectory +'/'+ timeNow, newName)
+        }
+    }
+    */
 }
 
 dependencies {
@@ -39,3 +92,4 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
 }
+
