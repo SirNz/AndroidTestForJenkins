@@ -24,7 +24,7 @@ android {
             }
             keyAlias "test_key"
             keyPassword "123456"
-            storePassword "visstep"
+            storePassword "viistep"
         }
     }
 
